@@ -2,7 +2,7 @@
 import requests
 from requests.auth import HTTPBasicAuth
 import json
-'''
+
 # url = "/rest/api/3/search"
 url = "http://ilscha03-jira-02:8080/rest/api/2/search"
 
@@ -27,17 +27,17 @@ response = requests.request(
 )
 # uat_issues = json.dumps(json.loads(response.text), sort_keys=True, indent=4, separators=(",", ": "))
 uat_issues = json.dump(json.loads(response.text), sort_keys=True, indent=4, separators=(",", ": "))
-print(type(uat_issues))
-'''
+print(uat_issues)
+
 # uat_issues = json.dumps(json.loads(response.text), sort_keys=True, indent=4, separators=(",", ": "))
 # print(response.txt)
 issues_dict = {}
-with open('jira.json',encoding="utf-8") as fp:
-    uat_issues =json.load(fp)
+with open('jira.json', encoding="utf-8") as fp:
+    uat_issues = json.load(fp)
 for issue in uat_issues['issues']:
     issues_dict[issue['key']] = issue['fields']['labels']
 label_list = []
-for list_item  in issues_dict.values():
+for list_item in issues_dict.values():
     # print(list_item)
     label_list.extend(list_item)
 
@@ -58,7 +58,7 @@ label_list = set(label_list)
 # {'Issue_Type_Enhancements', 'FileMgmt', 'Issue_Type_Issue', 'Report', 'UC4', 'UC3', 'UC5', 'UI', 'TDS', 'UC6',
 # 'ManualOverride', 'zprojdAlign', 'pipelines', 'PROD-Issue', 'inventory', 'UAT-issue', 'zprojAlign',
 # 'filters', 'uc5', 'P2', 'P1', 'P3'}
-for key,value in issues_dict.items():
+for key, value in issues_dict.items():
     for label in label_list:
 
         if 'P1' in value:
