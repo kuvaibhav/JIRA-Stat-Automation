@@ -26,7 +26,7 @@ response = requests.request(
    auth=auth
 )
 # uat_issues = json.dumps(json.loads(response.text), sort_keys=True, indent=4, separators=(",", ": "))
-uat_issues = json.dump(json.loads(response.text), sort_keys=True, indent=4, separators=(",", ": "))
+uat_issues = json.dumps(json.loads(response.text), sort_keys=True, indent=4, separators=(",", ": "))
 print(uat_issues)
 
 # uat_issues = json.dumps(json.loads(response.text), sort_keys=True, indent=4, separators=(",", ": "))
