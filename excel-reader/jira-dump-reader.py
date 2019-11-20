@@ -10,7 +10,7 @@ class CalculateJIRAStats(object):
         resolved_date = ''
         jira_issue_list = []
         input_work_book = xlrd.open_workbook(path)
-        input_work_sheet = input_work_book.sheet_by_index(0)
+        input_work_sheet = input_work_book.sheet_by_index(3)
         for i in range(1, input_work_sheet.nrows):
             current_row = input_work_sheet.row_values(i, 0, 100)
             jira_issue_object = {'jira_id': int(input_work_sheet.cell_value(i, 2)), 'assigned_to': input_work_sheet.cell_value(i, 13),
@@ -42,6 +42,9 @@ class CalculateJIRAStats(object):
                 priority = excel_row_array[i]
                 if track_priority_occurrence:
                     return priority
+        if not track_priority_occurrence:
+            raise Exception('Jira Ticket {} does not have any Priority assigned. For correct report priority'
+                            'needs to be assigned'.format(excel_row_array[1]))
         return priority
 
     @staticmethod
@@ -49,22 +52,26 @@ class CalculateJIRAStats(object):
         track_application_occurrence = False
         application = 'NA'
         for i in range(len(excel_row_array)):
-            if excel_row_array[i] in ['UC1', 'UC2', 'UC3', 'UC4', 'UC5', 'UC6']:
-                track_priority_occurrence = True
+            if excel_row_array[i] in ['UC1', 'UC2', 'UC3', 'UC4', 'UC5', 'UC6', 'uc1', 'uc2', 'uc3',
+                                      'uc4', 'uc5', 'uc6']:
+                track_application_occurrence = True
                 application = excel_row_array[i]
-                if track_priority_occurrence:
+                if track_application_occurrence:
                     return application
+        if not track_application_occurrence:
+            raise Exception('Jira Ticket {} does not have application name against it.'.
+                            format(excel_row_array[1]))
         return application
 
     @staticmethod
     def find_if_enhancement(excel_row_array):
         """
             To find an enhancement we need to look at below occurrence:
-            'Issue_Type_Issue' : False
-            'Issue_Type_Enhancements' : True
-            'Issue_Type_Additional_Requirements' : True
+            'Issue_Type_Issue' return False
+            'Issue_Type_Enhancements' return True
+            'Issue_Type_Additional_Requirements' return True
              If nothing is found look for
-             'UAT-issue' : False
+             Return as Issue i.e. False
         """
         for i in range(len(excel_row_array)):
             if excel_row_array[i] in ['Issue_Type_Enhancements', 'Issue_Type_Additional_Requirements']:
