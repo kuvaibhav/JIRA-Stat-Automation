@@ -189,6 +189,3 @@ class PopulateStats(object):
         print('P3          ' + str(blocked) + '                    ' + str(not_started) + '                  '
               + str(in_progress) + '            ' + str(uat) + '             ' + str(closed))
 
-
-if __name__ == '__main__':
-    CalculateJIRAStats()

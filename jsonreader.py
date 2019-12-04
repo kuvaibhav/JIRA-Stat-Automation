@@ -31,14 +31,12 @@ class ReadJiraIssues:
            auth=auth
         )
         # uat_issues = json.dumps(json.loads(response.text), sort_keys=True, indent=4, separators=(",", ": "))
-        uat_issues = json.dumps(json.loads(response.text), sort_keys=True, indent=4, separators=(",", ": "))
-        print(uat_issues)
+        uat_issues = json.loads(response.text)
+        # print(uat_issues)
 
-        # uat_issues = json.dumps(json.loads(response.text), sort_keys=True, indent=4, separators=(",", ": "))
-        # print(response.txt)
         issues_dict = {}
-        with open('jira.json', encoding="utf-8") as fp:
-            uat_issues = json.load(fp)
+        # with open('jira.json', encoding="utf-8") as fp:
+        #     uat_issues = json.load(fp)
         for issue in uat_issues['issues']:
             issues_dict[issue['key']] = issue['fields']['labels']
         label_list = []
