@@ -10,7 +10,7 @@ class CalculateJIRAStats(object):
         resolved_date = ''
         jira_issue_list = []
         input_work_book = xlrd.open_workbook(path)
-        input_work_sheet = input_work_book.sheet_by_index(3)
+        input_work_sheet = input_work_book.sheet_by_index(1)
         for i in range(1, input_work_sheet.nrows):
             current_row = input_work_sheet.row_values(i, 0, 100)
             jira_issue_object = {'jira_id': int(input_work_sheet.cell_value(i, 2)), 'assigned_to': input_work_sheet.cell_value(i, 13),
