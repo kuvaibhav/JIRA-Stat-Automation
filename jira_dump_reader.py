@@ -4,6 +4,11 @@ import xlrd
 class CalculateJIRAStats(object):
 
     def __init__(self):
+        self.jira_issues = ""
+        self.jira_enhancements = ""
+
+    def read_from_excel(self):
+
         # give JIRA dumps path
         path = 'dumps.xlsx'
         # give resolved date
@@ -25,11 +30,19 @@ class CalculateJIRAStats(object):
                 jira_enhancements.append(object)
             else:
                 jira_issues.append(object)
-
+        self.jira_issues = jira_issues
+        self.jira_enhancements = jira_enhancements
         print(jira_enhancements)
-        populate_stat_issues = PopulateStats('Issues', jira_issues)
+
+    def generate_report(self,jira_issues=None,jira_enhancements=None):
+        if not jira_issues:
+            jira_issues = self.jira_issues
+        if not jira_enhancements:
+            jira_enhancements = self.jira_enhancements
+
+        populate_stat_issues = PopulateStats('Issues', self.jira_issues)
         populate_stat_issues.print_report()
-        populate_stat_enhancements = PopulateStats('Enhancements', jira_enhancements)
+        populate_stat_enhancements = PopulateStats('Enhancements', self.jira_enhancements)
         populate_stat_enhancements.print_report()
 
     @staticmethod
