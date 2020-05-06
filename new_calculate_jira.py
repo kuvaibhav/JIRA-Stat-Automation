@@ -7,7 +7,7 @@ class CalculateJIRAStats(object):
 
     def __init__(self):
         # give JIRA dumps path
-        path = 'C:\\Users\\sballary\\Documents\\Sanjay\\PycharmProjects\\JIRA-Stat-Automation\\dumps_Feb-13-2020.xlsx'
+        path = 'C:\\Users\\sballary\\Documents\\Sanjay\\PycharmProjects\\JIRA-Stat-Automation\\dumps_Apr-30-2020.xlsx'
         # give resolved date
         resolved_date = ''
         jira_issue_list = []
@@ -34,6 +34,7 @@ class CalculateJIRAStats(object):
         all_jira = []
         all_jira.extend(jira_issues)
         all_jira.extend(jira_enhancements)
+        print("Total Issue/Enhancements: {}".format(len(jira_issues)+len(jira_enhancements)))
         print(collections.Counter([jira['priority'] for jira in all_jira]))
         print("Issues : {}".format(len(jira_issues)))
         print("Enhancements : {}".format(len(jira_enhancements)))

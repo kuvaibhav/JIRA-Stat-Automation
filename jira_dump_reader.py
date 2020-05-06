@@ -10,7 +10,7 @@ class CalculateJIRAStats(object):
     def read_from_excel(self):
 
         # give JIRA dumps path
-        path = 'dumps.xlsx'
+        path = 'dumps_Feb-6-2020.xlsx'
         # give resolved date
         resolved_date = ''
         jira_issue_list = []
@@ -202,3 +202,6 @@ class PopulateStats(object):
         print('P3          ' + str(blocked) + '                    ' + str(not_started) + '                  '
               + str(in_progress) + '            ' + str(uat) + '             ' + str(closed))
 
+if __name__ == '__main__':
+    cd = CalculateJIRAStats()
+    cd.read_from_excel()
