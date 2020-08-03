@@ -2,7 +2,8 @@
 import requests
 from requests.auth import HTTPBasicAuth
 import json
-
+from new_calculate_jira import CalculateJIRAStats
+import collections
 
 class ReadJiraIssues:
 
@@ -54,20 +55,43 @@ class ReadJiraIssues:
                 return False
         return False
 
+    @staticmethod
+    def report(jira_issue_list):
+        jira_issues = []
+        jira_enhancements = []
+        for object in jira_issue_list:
+            if object['isEnhancement']:
+                jira_enhancements.append(object)
+            else:
+                jira_issues.append(object)
+
+        all_jira = []
+        all_jira.extend(jira_issues)
+        all_jira.extend(jira_enhancements)
+        print("Total Issue/Enhancements: {}".format(len(jira_issues)+len(jira_enhancements)))
+        print(collections.Counter([jira['priority'] for jira in all_jira]))
+        print("Issues : {}".format(len(jira_issues)))
+        print("Enhancements : {}".format(len(jira_enhancements)))
+        populate_stat_issues = PopulateStats('Issues', jira_issues)
+        populate_stat_issues.print_report()
+        populate_stat_enhancements = PopulateStats('Enhancements', jira_enhancements)
+        populate_stat_enhancements.print_report()
+
+
 
     @staticmethod
     def fetch_jira_tickets():
         # url = "/rest/api/3/search"
         url = "http://ilscha03-jira-02:8080/rest/api/2/search"
 
-        auth = HTTPBasicAuth("sball005", "Nov@2019")
+        auth = HTTPBasicAuth("vlanid", "password")
 
         headers = {
            "Accept": "application/json"
         }
 
         query = {
-           "jql": "project = DEL  AND labels in (UAT-issue, PROD-Issue)  and (resolutiondate  >=  startOfMonth()  or resolutiondate is EMPTY )",
+           "jql": "project = 'SA3 Deloitte' AND labels in (UAT-issue, PROD-Issue)  and (resolutiondate  >=  startOfMonth()  or resolutiondate is EMPTY )",
            "maxResults": 1000,
 
         }
@@ -85,22 +109,28 @@ class ReadJiraIssues:
 
 
         issues_dict = {}
+        # print(uat_issues)
         # with open('jira.json', encoding="utf-8") as fp:
         #     uat_issues = json.load(fp)
         for issue in uat_issues['issues']:
             issues_dict[issue['key']] = issue['fields']['labels']
+
         # with open('uat_jira.json','w') as fp:
         #     fp.write(json.dumps(issues_dict))
         # label_list = []
         # for list_item in issues_dict.values():
         #     # print(list_item)
         #     label_list.extend(list_item)
-         for id,labels in issues_dict.items():
-            jira_issue_object = {'jira_id': id, 'assigned_to': 'Deloitte',
-                                 'priority': ReadJiraIssues.calculate_priority(labels),
-                                 'application': ReadJiraIssues.calculate_application(labels),
-                                 'isEnhancement': ReadJiraIssues.find_if_enhancement(labels), 'status': 'Open'}
+        jira_issue_list = []
+        for id,labels in issues_dict.items():
 
+            jira_issue_object = {'jira_id': id, 'assigned_to': 'Deloitte',
+                             'priority': ReadJiraIssues.calculate_priority(labels),
+                             'application': ReadJiraIssues.calculate_application(labels),
+                             'isEnhancement': ReadJiraIssues.find_if_enhancement(labels), 'status': 'Open'}
+            jira_issue_list.append(jira_issue_object)
+
+        CalculateJIRAStats.report(jira_issue_list)
         '''
         p1_list = []
         p2_list = []
@@ -161,6 +191,7 @@ class ReadJiraIssues:
         # # 
         '''
         # print(uc4_list)
+
 
 if __name__ == '__main__':
 

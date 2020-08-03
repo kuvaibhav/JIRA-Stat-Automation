@@ -5,14 +5,18 @@ import cProfile, pstats,io
 
 class CalculateJIRAStats(object):
 
-    def __init__(self):
+    def __init__(self,type):
         # give JIRA dumps path
-        path = 'C:\\Users\\sballary\\Documents\\Sanjay\\PycharmProjects\\JIRA-Stat-Automation\\dumps_Apr-30-2020.xlsx'
-        # give resolved date
-        resolved_date = ''
+        if type == 'XL':
+            path = 'C:\\Users\\sballary\\Documents\\Sanjay\\PycharmProjects\\JIRA-Stat-Automation\\dumps_July-30-2020.xlsx'
+            # give resolved date
+            resolved_date = ''
+            jira_issue_list = []
+            input_work_book = xlrd.open_workbook(path)
+            input_work_sheet = input_work_book.sheet_by_index(1)
+            self.start_reading(input_work_sheet)
+    def start_reading(self,input_work_sheet):
         jira_issue_list = []
-        input_work_book = xlrd.open_workbook(path)
-        input_work_sheet = input_work_book.sheet_by_index(1)
         for i in range(1, input_work_sheet.nrows):
             current_row = input_work_sheet.row_values(i, 0, 100)
             jira_issue_object = {'jira_id': int(input_work_sheet.cell_value(i, 2)), 'assigned_to': input_work_sheet.cell_value(i, 13),
@@ -20,6 +24,9 @@ class CalculateJIRAStats(object):
                                  'application': self.calculate_application(current_row),
                                  'isEnhancement': self.find_if_enhancement(current_row), 'status': input_work_sheet.cell_value(i, 4)}
             jira_issue_list.append(jira_issue_object)
+        self.report(jira_issue_list)
+    @staticmethod
+    def report(jira_issue_list):
         jira_issues = []
         jira_enhancements = []
         for object in jira_issue_list:
@@ -27,9 +34,6 @@ class CalculateJIRAStats(object):
                 jira_enhancements.append(object)
             else:
                 jira_issues.append(object)
-
-
-
 
         all_jira = []
         all_jira.extend(jira_issues)
@@ -212,7 +216,7 @@ class PopulateStats(object):
 if __name__ == '__main__':
     # pr = cProfile.Profile()
     # pr.enable()
-    CalculateJIRAStats()
+    CalculateJIRAStats('XL')
     # pr.disable()
     # s = io.StringIO()
     # sortby = 'cumulative'
