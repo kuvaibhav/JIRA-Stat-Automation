@@ -1,14 +1,12 @@
 import xlrd
 import collections
 
-import cProfile, pstats,io
-
 class CalculateJIRAStats(object):
 
     def __init__(self,type):
         # give JIRA dumps path
         if type == 'XL':
-            path = 'C:\\Users\\sballary\\Documents\\Sanjay\\PycharmProjects\\JIRA-Stat-Automation\\dumps_July-30-2020.xlsx'
+            path = 'C:\\Users\\sballary\\Documents\\Sanjay\\PycharmProjects\\JIRA-Stat-Automation\\dumps_Aug-20-2020.xlsx'
             # give resolved date
             resolved_date = ''
             jira_issue_list = []
@@ -46,6 +44,18 @@ class CalculateJIRAStats(object):
         populate_stat_issues.print_report()
         populate_stat_enhancements = PopulateStats('Enhancements', jira_enhancements)
         populate_stat_enhancements.print_report()
+        print("--------------------------------------------------------------------------------")
+        # print("Issues")
+        for ticket in jira_issues:
+                # if ticket['application'] in ['UC4', 'uc4'] and ticket['priority']  in ['P1','p1']:
+                print("{},{},{},{},{}".format(ticket['application'].upper(),ticket['jira_id'],ticket['priority'],ticket['status'],'Issue'))
+        # print("Enhancements")
+        for ticket in jira_enhancements:
+                # if ticket['application'] in ['UC4', 'uc4'] and ticket['priority']  in ['P1','p1']:
+                print("{},{},{},{},{}".format(ticket['application'].upper(), ticket['jira_id'], ticket['priority'],ticket['status'],'Enhancement'))
+
+
+
 
     @staticmethod
     def calculate_priority(excel_row_array):
@@ -66,9 +76,10 @@ class CalculateJIRAStats(object):
     def calculate_application(excel_row_array):
         track_application_occurrence = False
         application = 'NA'
+        import re
+        pattern = re.compile("UC\d",re.IGNORECASE)
         for i in range(len(excel_row_array)):
-            if excel_row_array[i] in ['UC1', 'UC2', 'UC3', 'UC4', 'UC5', 'UC6', 'uc1', 'uc2', 'uc3',
-                                      'uc4', 'uc5', 'uc6']:
+            if pattern.match(excel_row_array[i]):
                 track_application_occurrence = True
                 application = excel_row_array[i]
                 if track_application_occurrence:
@@ -151,6 +162,7 @@ class PopulateStats(object):
             else:
                 raise Exception('Stats cannot be generated as Jira Ticket {} does not have any priority'
                                 .format(jiraobject['jira_id']))
+
         blocked = 0
         not_started = 0
         in_progress = 0
@@ -196,6 +208,7 @@ class PopulateStats(object):
         in_progress = 0
         uat = 0
         closed = 0
+
         for ticket in p3_jira_tickets:
             if ticket['status'] == 'New Requests' or ticket['status'] == 'Backlog':
                 not_started = not_started + 1
@@ -214,13 +227,4 @@ class PopulateStats(object):
 
 
 if __name__ == '__main__':
-    # pr = cProfile.Profile()
-    # pr.enable()
     CalculateJIRAStats('XL')
-    # pr.disable()
-    # s = io.StringIO()
-    # sortby = 'cumulative'
-    # ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
-    # ps.print_stats()
-    # print(s.getvalue())
-
